@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "start2": "ts-node src/index.ts",
     "dev2": "nodemon --exec ts-node src/index.ts",
-    "create:migration": "mikro-orm migration:create"
+    "migrate": "mikro-orm migration:create"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,7 @@
     "@mikro-orm/core": "^4.0.0-alpha.0",
     "@mikro-orm/migrations": "^4.0.0-alpha.0",
     "@mikro-orm/postgresql": "^4.0.0-alpha.0",
+    "@types/nodemailer": "^6.4.4",
     "apollo-server-express": "^2.16.1",
     "argon2": "^0.26.2",
     "connect-redis": "^5.0.0",
@@ -37,6 +38,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "graphql": "^15.3.0",
+    "nodemailer": "^6.7.3",
     "pg": "^8.3.0",
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
