@@ -1,6 +1,15 @@
 import { UsernamePasswordInput } from "../resolvers/UsernamePasswordInput";
 
 export const validateRegister = (options: UsernamePasswordInput) => {
+  if (!options.email.includes("@")) {
+    return [
+      {
+        field: "email",
+        message: "invalid email",
+      },
+    ];
+  }
+
   if (options.username.length <= 2) {
     return [
       {
@@ -9,19 +18,12 @@ export const validateRegister = (options: UsernamePasswordInput) => {
       },
     ];
   }
-  if (!options.email.includes("@")) {
-    return [
-      {
-        field: "email",
-        message: "This is not a valid email address",
-      },
-    ];
-  }
+
   if (options.username.includes("@")) {
     return [
       {
         field: "username",
-        message: "The username cannot include @ sign",
+        message: "cannot include an @",
       },
     ];
   }
@@ -34,5 +36,6 @@ export const validateRegister = (options: UsernamePasswordInput) => {
       },
     ];
   }
+
   return null;
 };
