@@ -1,6 +1,5 @@
 import { Box, Button } from "@chakra-ui/core";
 import { Formik, Form } from "formik";
-import { responsePathAsArray } from "graphql";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
