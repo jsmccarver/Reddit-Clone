@@ -3,7 +3,6 @@ import { Formik, Form } from "formik";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { InputField } from "../../components/InputField";
 import { Wrapper } from "../../components/Wrapper";
 import { useChangePasswordMutation } from "../../generated/graphql";
@@ -13,7 +12,7 @@ import { toErrorMap } from "../../utils/toErrorMap";
 export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   const [, changePassword] = useChangePasswordMutation();
   const router = useRouter();
-  const [tokenError, setTokenError] = useState();
+
   return (
     <Wrapper variant="small">
       <Formik
