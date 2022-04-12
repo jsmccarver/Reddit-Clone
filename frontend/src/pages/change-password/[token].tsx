@@ -1,5 +1,6 @@
 import { Box, Button } from "@chakra-ui/core";
 import { Formik, Form } from "formik";
+
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
@@ -12,7 +13,6 @@ import { toErrorMap } from "../../utils/toErrorMap";
 export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   const [, changePassword] = useChangePasswordMutation();
   const router = useRouter();
-
   return (
     <Wrapper variant="small">
       <Formik
@@ -39,7 +39,7 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
               placeholder="New Password"
               label="New Password"
             />
-            <Box color="red">{tokenError}</Box>
+
             <Button
               mt={4}
               type="submit"
