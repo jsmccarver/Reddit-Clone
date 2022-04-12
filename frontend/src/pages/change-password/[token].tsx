@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/core";
+import { Button } from "@chakra-ui/core";
 import { Formik, Form } from "formik";
 
 import { NextPage } from "next";
