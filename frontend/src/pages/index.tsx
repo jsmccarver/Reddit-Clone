@@ -16,9 +16,12 @@ const Index = () => {
             <Grid
               templateColumns="1fr 13fr"
               border="1px"
+              cursor="pointer"
+              borderRadius="4px"
               borderColor="grey.100"
               gap={0}
               key={post.id}
+              _hover={{ borderColor: "black" }}
             >
               <Flex bg="grey.100" alignItems="center" justifyContent="center">
                 {post.points}
