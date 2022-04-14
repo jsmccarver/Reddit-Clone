@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import { Box, Button } from "@chakra-ui/core";
-import { Wrapper } from "../components/Wrapper";
+import { Layout } from "../components/Layout";
 import { InputField } from "../components/InputField";
 import { useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
@@ -15,7 +15,7 @@ const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
   const [, register] = useRegisterMutation();
   return (
-    <Wrapper variant="small">
+    <Layout variant="small">
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -56,7 +56,7 @@ const Register: React.FC<registerProps> = ({}) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 
