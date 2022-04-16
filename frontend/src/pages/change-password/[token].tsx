@@ -45,7 +45,6 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              variantColor="teal"
             >
               login
             </Button>
