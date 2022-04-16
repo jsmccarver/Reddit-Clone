@@ -46,7 +46,6 @@ export const createPost: React.FC<{}> = ({}) => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              variantColor="teal"
             >
               Create Post
             </Button>
@@ -54,7 +53,6 @@ export const createPost: React.FC<{}> = ({}) => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              variantColor="teal"
             >
               Cancel
             </Button>
