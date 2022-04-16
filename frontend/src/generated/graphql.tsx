@@ -77,6 +77,8 @@ export type Post = {
   text: Scalars['String'];
   points: Scalars['Float'];
   creatorId: Scalars['Float'];
+  creatorUsername: Scalars['String'];
+  creator: User;
 };
 
 export type PostInput = {
@@ -162,7 +164,7 @@ export type CreatePostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text' | 'points' | 'creatorId'>
+    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text' | 'points' | 'creatorId' | 'creatorUsername'>
   ) }
 );
 
@@ -229,7 +231,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text' | 'points'>
+    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text' | 'points' | 'creatorId' | 'creatorUsername'>
   )> }
 );
 
@@ -277,6 +279,7 @@ export const CreatePostDocument = gql`
     text
     points
     creatorId
+    creatorUsername
   }
 }
     `;
@@ -344,6 +347,8 @@ export const PostsDocument = gql`
     title
     text
     points
+    creatorId
+    creatorUsername
   }
 }
     `;

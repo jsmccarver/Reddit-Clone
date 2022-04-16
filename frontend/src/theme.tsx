@@ -1,4 +1,4 @@
-import { theme as chakraTheme } from "@chakra-ui/core";
+import { theme as chakraTheme } from "@chakra-ui/react";
 
 const fonts = { ...chakraTheme.fonts, mono: `'Menlo', monospace` };
 
@@ -9,7 +9,7 @@ const theme = {
   styles: {
     global: () => ({
       body: {
-        bg: "",
+        bg: "#dae0e6",
       },
     }),
   },
@@ -30,6 +30,7 @@ const theme = {
     },
     grey: {
       100: "#f8f9fa",
+      200: "#E3E3E3"
     },
   },
   fonts,

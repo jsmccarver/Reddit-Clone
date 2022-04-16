@@ -41,6 +41,7 @@ export class PostResolver {
     return Post.create({
       ...input,
       creatorId: req.session.userId,
+      creatorUsername: req.session.username,
     }).save();
   }
 

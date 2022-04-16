@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/core";
+import { Button } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 
 import { NextPage } from "next";
@@ -13,6 +13,7 @@ import { toErrorMap } from "../../utils/toErrorMap";
 export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   const [, changePassword] = useChangePasswordMutation();
   const router = useRouter();
+  console.log(token)
   return (
     <Wrapper variant="small">
       <Formik

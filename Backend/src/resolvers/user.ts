@@ -90,7 +90,8 @@ export class UserResolver {
     await redis.del(key);
 
     // log in user after change password
-    req.session.userId = user.id;
+    req.session.userId = user!.id;
+    req.session.username = user!.username;
 
     return { user };
   }
@@ -171,6 +172,7 @@ export class UserResolver {
     // this will set a cookie on the user
     // keep them logged in
     req.session.userId = user!.id;
+    req.session.username = user!.username;
 
     return { user };
   }
@@ -208,7 +210,8 @@ export class UserResolver {
       };
     }
 
-    req.session.userId = user.id;
+    req.session.userId = user!.id;
+    req.session.username = user!.username;
 
     return { user };
   }
