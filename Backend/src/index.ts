@@ -24,12 +24,11 @@ const main = async () => {
     entities: [Post, User],
   });
   dataSource.initialize();
-
   const app = express();
 
   const RedisStore = connectRedis(session);
   const redis = new Redis(process.env.REDIS_URL);
-  app.set("proxy", 1);
+  app.set("trust proxy", 1);
   app.use(
     cors({
       origin: process.env.CORS_ORIGIN,
@@ -48,7 +47,7 @@ const main = async () => {
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
-        domain: __prod__ ? ".codeponder.com" : undefined,
+        domain: __prod__ ? ".jmccarver-reddit-clone.com" : undefined,
       },
       saveUninitialized: false,
       secret: process.env.SESSION_SECRET,

@@ -4,9 +4,11 @@ import { usePostsQuery } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import { Box, Flex, Grid, Heading, Input, Link, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useEffect } from "react";
 
 const Index = () => {
   const [{ data }] = usePostsQuery();
+
   return (
     <Layout>
       <Grid
@@ -21,9 +23,8 @@ const Index = () => {
         bg="white"
         templateColumns="50px auto"
       >
-        <Box width="50px" bg="#d7dfe2"    borderRadius='full'
->
-          <svg
+        <Box width="50px" bg="#d7dfe2" borderRadius="full">
+          {/* <svg
             viewBox="0 0 320 320"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -49,9 +50,11 @@ const Index = () => {
               <path d="m261.37 80.13a5.12 5.12 0 0 1 -.27-1.29c-.06-.34-.08-.75-.17-1.2s-.19-1-.3-1.5a23.88 23.88 0 0 0 -3.12-7.61 22.56 22.56 0 0 0 -6.59-6.71 20 20 0 0 0 -7.06-2.93 22.12 22.12 0 0 0 -19.67 5.49 21.36 21.36 0 0 0 -5.7 9 20.88 20.88 0 0 0 -.7 10.29 21.16 21.16 0 0 0 9.47 14.18 21.55 21.55 0 0 0 16.06 2.92 21.77 21.77 0 0 0 12.8-8.08 23.8 23.8 0 0 0 3.39-6.16 26 26 0 0 0 1.32-6.35 19.06 19.06 0 0 1 .12 6.81 21.83 21.83 0 0 1 -8.21 13.51 18.67 18.67 0 0 1 -5.13 2.82 24.34 24.34 0 0 1 -8.2 1.31 24.84 24.84 0 0 1 -7.83-1.26 25.86 25.86 0 0 1 -6.77-3.5 25 25 0 0 1 -5.2-5.16 23.4 23.4 0 0 1 -3.35-6.21 25 25 0 0 1 -1-3.32c-.13-.56-.18-1.12-.28-1.68l-.12-.84c0-.28 0-.56-.05-.84 0-.56 0-1.12-.07-1.68s.05-1.11.08-1.66a11.26 11.26 0 0 1 .17-1.64c.09-.54.15-1.09.26-1.62a25.58 25.58 0 0 1 2.15-6 24.56 24.56 0 0 1 5.71-7.24c.37-.34.79-.62 1.18-.93a11.19 11.19 0 0 1 1.21-.87 23.57 23.57 0 0 1 21.4-2.45 23 23 0 0 1 8.39 5.48 22 22 0 0 1 6.08 14.14c.11 1.26 0 2.29 0 2.78z"></path>
             </g>
           </svg>
+          
+  */}
         </Box>
         <Box>
-          <NextLink href="/login">
+          <NextLink href="/create-post">
             <Link mr={2}>
               <Input
                 placeholder="Create Post"
@@ -86,7 +89,6 @@ const Index = () => {
               <Box bg="white">
                 <Box>
                   <Text color="grey" fontSize="sm" p={1}>
-                    {" "}
                     Post by u/{post.creatorUsername} Created At:{" "}
                     {post.createdAt}
                   </Text>
