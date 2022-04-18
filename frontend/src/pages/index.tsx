@@ -4,7 +4,6 @@ import { usePostsQuery } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import { Box, Flex, Grid, Heading, Input, Link, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useEffect } from "react";
 
 const Index = () => {
   const [{ data }] = usePostsQuery();
