@@ -18,15 +18,22 @@ import { useEffect, useState } from "react";
 const Index = () => {
   const [{ data }] = usePostsQuery();
   const [sortType, setSort] = useState("newest");
-  console.log(data);
-  const [Posts, setPosts] = useState(data?.posts);
+  const [Posts, setPosts] = useState(
+    data?.posts.sort((a: any, b: any) => b.createdAt - a.createdAt)
+  );
+
   // Sorting by ID
   useEffect(() => {
-    if (sortType == "newest") {
-      setPosts(data?.posts.sort((a: any, b: any) => b.createdAt - a.createdAt));
-    } else if (sortType == "oldest") {
-      setPosts(data?.posts.sort((a: any, b: any) => a.createdAt - b.createdAt));
-      console.log("oldest");
+    if (sortType === "newest") {
+      const updateArray = [
+        ...Posts!.sort((a: any, b: any) => b.createdAt - a.createdAt),
+      ];
+      setPosts(updateArray);
+    } else if (sortType === "oldest") {
+      const updateArray = [
+        ...Posts!.sort((a: any, b: any) => a.createdAt - b.createdAt),
+      ];
+      setPosts(updateArray);
     }
   }, [sortType]);
 
