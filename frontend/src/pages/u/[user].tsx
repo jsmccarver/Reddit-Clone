@@ -17,7 +17,7 @@ export const UserPage: NextPage<{ user: string }> = ({ user }) => {
 
   const posts = useGetUserPostsQuery({
     variables: {
-      id: data?.getuser?.id,
+      id: data?.getuser?.id!,
     },
   });
   console.log(posts);
