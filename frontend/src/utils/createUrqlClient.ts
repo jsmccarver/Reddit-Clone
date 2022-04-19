@@ -25,8 +25,8 @@ const errorExchange: Exchange =
   };
 
 export const createUrqlClient = (ssrExchange: any) => ({
-  url: "http://localhost:4000/graphql",
-  /*url: "https://backend.jmccarver-reddit-clone.com/graphql", */
+  /* url: "http://localhost:4000/graphql",*/
+  url: "https://backend.jmccarver-reddit-clone.com/graphql",
   fetchOptions: {
     credentials: "include" as const,
   },
