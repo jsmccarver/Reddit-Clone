@@ -1,14 +1,21 @@
 import { Grid, Flex, Box, Heading, Text } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
-import { useEffect, useState } from "react";
+import {
+  Key,
+  ReactChild,
+  ReactFragment,
+  ReactPortal,
+  useEffect,
+  useState,
+} from "react";
 import { Layout } from "../../components/Layout";
 import { useGetUserPostsQuery, useGetuserQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 
 export const UserPage: NextPage<{ user: string }> = ({ user }) => {
   const [activeUser, setUser] = useState(false);
-  const [userPosts, setPosts] = useState([{}]);
+  const [userPosts, setPosts] = useState<any>([{}]);
   const [{ data }] = useGetuserQuery({
     variables: {
       username: user,
@@ -44,43 +51,52 @@ export const UserPage: NextPage<{ user: string }> = ({ user }) => {
             hello {data?.getuser?.username}
             <div>user created on: {data?.getuser?.createdAt}</div>
             <Grid templateColumns="1fr" gap={4}>
-              {userPosts.map((post) => (
-                <Grid
-                  templateColumns="50px auto"
-                  cursor="pointer"
-                  border="1px #ccc"
-                  borderRadius="4px"
-                  gap={0}
-                  key={post.id}
-                  _hover={{ borderColor: "black" }}
-                >
-                  <Flex
-                    bg="#f8f9fa"
-                    alignItems="center"
-                    justifyContent="center"
+              {userPosts.map(
+                (post: {
+                  id: Key | undefined;
+                  points: undefined | number;
+                  creatorUsername: undefined | string;
+                  createdAt: undefined | string;
+                  title: undefined | string;
+                  text: undefined | string;
+                }) => (
+                  <Grid
+                    templateColumns="50px auto"
+                    cursor="pointer"
+                    border="1px #ccc"
+                    borderRadius="4px"
+                    gap={0}
+                    key={post.id}
+                    _hover={{ borderColor: "black" }}
                   >
-                    {post.points}
-                  </Flex>
-                  <Box bg="white">
-                    <Box>
-                      <Text color="grey" fontSize="sm" p={1}>
-                        Post by u/{post.creatorUsername} Created At:
-                        {post.createdAt}
-                      </Text>
+                    <Flex
+                      bg="#f8f9fa"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      {post.points}
+                    </Flex>
+                    <Box bg="white">
+                      <Box>
+                        <Text color="grey" fontSize="sm" p={1}>
+                          Post by u/{post.creatorUsername} Created At:
+                          {post.createdAt}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Heading fontSize="lg" p={1}>
+                          {post.title}
+                        </Heading>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" p={1}>
+                          {post.text}
+                        </Text>
+                      </Box>
                     </Box>
-                    <Box>
-                      <Heading fontSize="lg" p={1}>
-                        {post.title}
-                      </Heading>
-                    </Box>
-                    <Box>
-                      <Text fontSize="sm" p={1}>
-                        {post.text}
-                      </Text>
-                    </Box>
-                  </Box>
-                </Grid>
-              ))}
+                  </Grid>
+                )
+              )}
             </Grid>
           </Box>
         ) : (
