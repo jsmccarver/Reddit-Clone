@@ -1,14 +1,7 @@
 import { Grid, Flex, Box, Heading, Text } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
-import {
-  Key,
-  ReactChild,
-  ReactFragment,
-  ReactPortal,
-  useEffect,
-  useState,
-} from "react";
+import { Key, useEffect, useState } from "react";
 import { Layout } from "../../components/Layout";
 import { useGetUserPostsQuery, useGetuserQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
