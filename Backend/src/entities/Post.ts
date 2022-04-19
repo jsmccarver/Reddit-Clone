@@ -18,7 +18,7 @@ export class Post extends BaseEntity {
   id!: number;
 
   @Field(() => String)
-  @CreateDateColumn({ type: "date" })
+  @CreateDateColumn({ type: "timestamptz" })
   createdAt: Date;
 
   @Field(() => String)
@@ -43,8 +43,9 @@ export class Post extends BaseEntity {
 
   @Field()
   @Column()
-  creatorUsername: String
-  
+  creatorUsername: String;
+
+  @Field()
   @ManyToOne(() => User, (user) => user.posts)
   creator: User;
 }

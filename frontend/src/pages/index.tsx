@@ -2,27 +2,49 @@ import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { usePostsQuery } from "../generated/graphql";
 import { Layout } from "../components/Layout";
-import { Box, Flex, Grid, Heading, Input, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Heading,
+  Input,
+  Link,
+  Text,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useEffect, useState } from "react";
 
 const Index = () => {
   const [{ data }] = usePostsQuery();
+  const [sortType, setSort] = useState("newest");
+  console.log(data);
+  const [Posts, setPosts] = useState(data?.posts);
+  // Sorting by ID
+  useEffect(() => {
+    if (sortType == "newest") {
+      setPosts(data?.posts.sort((a: any, b: any) => b.createdAt - a.createdAt));
+    } else if (sortType == "oldest") {
+      setPosts(data?.posts.sort((a: any, b: any) => a.createdAt - b.createdAt));
+      console.log("oldest");
+    }
+  }, [sortType]);
 
   return (
     <Layout>
       <Grid
         mb={4}
-        pr={1}
-        pl={1}
-        pt={3}
-        pb={3}
-        gap={2}
+        p="8px"
+        gap={0}
+        border="1px #ccc"
+        borderRadius="4px"
+        height="56px"
         alignContent="center"
         alignItems="center"
         bg="white"
         templateColumns="50px auto"
       >
-        <Box width="50px" bg="#d7dfe2" borderRadius="full">
+        <Box width="40px" bg="#d7dfe2" borderRadius="full">
           <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
             <g fill="white">
               <path d="m124.91 237.79c-53.47 32.9-28.3 109.77-9.81 76.9"></path>
@@ -61,18 +83,44 @@ const Index = () => {
           </NextLink>
         </Box>
       </Grid>
+      <Grid
+        mb={4}
+        p="8px"
+        gap={10}
+        border="1px #ccc"
+        borderRadius="4px"
+        height="56px"
+        alignContent="center"
+        alignItems="center"
+        bg="white"
+        gridTemplateColumns="1fr 1fr"
+      >
+        <Button
+          onClick={() => {
+            setSort("newest");
+          }}
+        >
+          Newest
+        </Button>
+        <Button
+          onClick={() => {
+            setSort("oldest");
+          }}
+        >
+          Oldest
+        </Button>
+      </Grid>
 
-      {!data ? (
+      {!Posts ? (
         <div>Loading...</div>
       ) : (
         <Grid templateColumns="1fr" gap={4}>
-          {data.posts.map((post) => (
+          {Posts.map((post) => (
             <Grid
               templateColumns="50px auto"
-              border="1px"
               cursor="pointer"
+              border="1px #ccc"
               borderRadius="4px"
-              borderColor="grey.200"
               gap={0}
               key={post.id}
               _hover={{ borderColor: "black" }}
@@ -82,10 +130,13 @@ const Index = () => {
               </Flex>
               <Box bg="white">
                 <Box>
-                  <Text color="grey" fontSize="sm" p={1}>
-                    Post by u/{post.creatorUsername} Created At:{" "}
-                    {post.createdAt}
-                  </Text>
+                  <NextLink href={`./u/${post.creatorUsername}`}>
+                    <Text color="grey" fontSize="sm" p={1}>
+                      Post by u/{post.creatorUsername}
+                      Created At:
+                      {post.createdAt}
+                    </Text>
+                  </NextLink>
                 </Box>
                 <Box>
                   <Heading fontSize="lg" p={1}>

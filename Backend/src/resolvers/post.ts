@@ -32,6 +32,11 @@ export class PostResolver {
     return Post.findOneBy({ id: id });
   }
 
+  @Query(() => [Post])
+  getUserPosts(@Arg("id") id: number): Promise<Post[] | null> {
+    return Post.findBy({ creatorId: id });
+  }
+
   @Mutation(() => Post)
   @UseMiddleware(isAUth)
   async createPost(

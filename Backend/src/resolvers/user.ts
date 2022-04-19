@@ -231,4 +231,9 @@ export class UserResolver {
       })
     );
   }
+
+  @Query(() => User, { nullable: true })
+  getuser(@Arg("username") username: string): Promise<User | null> {
+    return User.findOneBy({ username: username });
+  }
 }

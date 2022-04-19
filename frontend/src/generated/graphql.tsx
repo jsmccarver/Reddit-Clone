@@ -91,12 +91,24 @@ export type Query = {
   hello: Scalars['String'];
   posts: Array<Post>;
   post?: Maybe<Post>;
+  getUserPosts: Array<Post>;
   me?: Maybe<User>;
+  getuser?: Maybe<User>;
 };
 
 
 export type QueryPostArgs = {
   id: Scalars['Float'];
+};
+
+
+export type QueryGetUserPostsArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type QueryGetuserArgs = {
+  username: Scalars['String'];
 };
 
 export type User = {
@@ -213,6 +225,32 @@ export type RegisterMutation = (
   ) }
 );
 
+export type GetUserPostsQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type GetUserPostsQuery = (
+  { __typename?: 'Query' }
+  & { getUserPosts: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text' | 'points' | 'creatorId' | 'creatorUsername'>
+  )> }
+);
+
+export type GetuserQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type GetuserQuery = (
+  { __typename?: 'Query' }
+  & { getuser?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'username' | 'id' | 'createdAt'>
+  )> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -326,6 +364,37 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const GetUserPostsDocument = gql`
+    query getUserPosts($id: Float!) {
+  getUserPosts(id: $id) {
+    id
+    createdAt
+    updatedAt
+    title
+    text
+    points
+    creatorId
+    creatorUsername
+  }
+}
+    `;
+
+export function useGetUserPostsQuery(options: Omit<Urql.UseQueryArgs<GetUserPostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetUserPostsQuery>({ query: GetUserPostsDocument, ...options });
+};
+export const GetuserDocument = gql`
+    query getuser($username: String!) {
+  getuser(username: $username) {
+    username
+    id
+    createdAt
+  }
+}
+    `;
+
+export function useGetuserQuery(options: Omit<Urql.UseQueryArgs<GetuserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetuserQuery>({ query: GetuserDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {

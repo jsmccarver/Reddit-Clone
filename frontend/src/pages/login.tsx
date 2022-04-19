@@ -23,7 +23,11 @@ const Login: React.FC<{}> = ({}) => {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
             // worked
-            router.push("/");
+            if (typeof router.query.next === "string") {
+              router.push(router.query.next);
+            } else {
+              router.push("/");
+            }
           }
         }}
       >
@@ -47,11 +51,7 @@ const Login: React.FC<{}> = ({}) => {
                 <Link ml="auto">Forgot Password?</Link>
               </NextLink>
             </Flex>
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-            >
+            <Button mt={4} type="submit" isLoading={isSubmitting}>
               login
             </Button>
           </Form>

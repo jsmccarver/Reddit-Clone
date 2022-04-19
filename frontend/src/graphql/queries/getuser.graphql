@@ -1,0 +1,7 @@
+query getuser($username: String!) {
+  getuser(username: $username) {
+    username
+    id
+    createdAt
+  }
+}
