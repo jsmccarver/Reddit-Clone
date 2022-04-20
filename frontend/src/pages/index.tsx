@@ -10,21 +10,26 @@ import {
   Heading,
   Input,
   Link,
+  Stack,
   Text,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Index = () => {
-  const [{ data }] = usePostsQuery();
-  const [sortType, setSort] = useState("newest");
-  const [Posts, setPosts] = useState(
-    data?.posts.sort((a: any, b: any) => b.createdAt - a.createdAt)
-  );
+  const [variables, setVariables] = useState({
+    limit: 10,
+    cursor: null as null | string,
+  });
+  const [{ data, fetching }] = usePostsQuery({
+    variables,
+  });
+  //const [sortType, setSort] = useState("newest");
+  //const [Posts, setPosts] = useState(data?.posts);
 
   // Sorting by ID
-  useEffect(() => {
-    if (sortType === "newest") {
+  /*useEffect(() => {
+     if (sortType === "newest") {
       const updateArray = [
         ...Posts!.sort((a: any, b: any) => b.createdAt - a.createdAt),
       ];
@@ -35,7 +40,7 @@ const Index = () => {
       ];
       setPosts(updateArray);
     }
-  }, [sortType]);
+  }, [sortType]); */
 
   return (
     <Layout>
@@ -43,7 +48,8 @@ const Index = () => {
         mb={4}
         p="8px"
         gap={0}
-        border="1px #ccc"
+        border="1px"
+        borderColor="#ccc"
         borderRadius="4px"
         height="56px"
         alignContent="center"
@@ -90,51 +96,43 @@ const Index = () => {
           </NextLink>
         </Box>
       </Grid>
-      <Grid
-        mb={4}
-        p="8px"
-        gap={10}
-        border="1px #ccc"
-        borderRadius="4px"
-        height="56px"
-        alignContent="center"
-        alignItems="center"
-        bg="white"
-        gridTemplateColumns="1fr 1fr"
-      >
-        <Button
-          onClick={() => {
-            setSort("newest");
-          }}
-        >
-          Newest
-        </Button>
-        <Button
-          onClick={() => {
-            setSort("oldest");
-          }}
-        >
-          Oldest
-        </Button>
-      </Grid>
 
-      {!Posts ? (
+      {!data && fetching ? (
         <div>Loading...</div>
       ) : (
-        <Grid templateColumns="1fr" gap={4}>
-          {Posts.map((post) => (
+        <Stack spacing="10px">
+          {data!.posts.map((post) => (
             <Grid
               templateColumns="50px auto"
               cursor="pointer"
-              border="1px #ccc"
+              border="1px"
               borderRadius="4px"
+              borderColor="#CCCCCC"
               gap={0}
               key={post.id}
+              overflow="hidden"
               _hover={{ borderColor: "black" }}
             >
-              <Flex bg="#f8f9fa" alignItems="center" justifyContent="center">
-                {post.points}
-              </Flex>
+              <Grid
+                bg="#f8f9fa"
+                justifyContent="center"
+                alignContent="baseline"
+                pt={1}
+                gap={0}
+              >
+                <Box>{post.points}</Box>
+                <Box>
+                  <Text
+                    textAlign="center"
+                    color="#1A1A1B"
+                    fontSize="12px"
+                    fontWeight="700"
+                  >
+                    {post.points}
+                  </Text>
+                </Box>
+                <Box>{post.points}</Box>
+              </Grid>
               <Box bg="white">
                 <Box>
                   <NextLink href={`./u/${post.creatorUsername}`}>
@@ -152,14 +150,30 @@ const Index = () => {
                 </Box>
                 <Box>
                   <Text fontSize="sm" p={1}>
-                    {post.text}
+                    {post.textSnippet}
                   </Text>
                 </Box>
               </Box>
             </Grid>
           ))}
-        </Grid>
+        </Stack>
       )}
+      {data ? (
+        <Flex>
+          <Button
+            onClick={() => {
+              setVariables({
+                limit: variables.limit,
+                cursor: data.posts[data.posts.length - 1].createdAt,
+              });
+            }}
+            m="auto"
+            my={8}
+          >
+            Load More
+          </Button>
+        </Flex>
+      ) : null}
     </Layout>
   );
 };

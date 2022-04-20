@@ -14,16 +14,9 @@ import cors from "cors";
 import { DataSource } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
+import path from "path";
 
 const main = async () => {
-  let dataSource = new DataSource({
-    type: "postgres",
-    url: process.env.DATABASE_URL,
-    logging: true,
-    synchronize: true,
-    entities: [Post, User],
-  });
-  dataSource.initialize();
   const app = express();
 
   const RedisStore = connectRedis(session);
@@ -73,6 +66,21 @@ const main = async () => {
   });
 };
 
+let dataSource = new DataSource({
+  type: "postgres",
+  url: process.env.DATABASE_URL,
+  logging: true,
+  synchronize: true,
+  migrations: [path.join(__dirname, "./migrations/*")],
+  entities: [Post, User],
+});
+
+dataSource.initialize().then(() => {
+  dataSource.runMigrations();
+});
+
 main().catch((err) => {
   console.error(err);
 });
+
+export default dataSource;
