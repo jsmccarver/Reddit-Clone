@@ -1,4 +1,4 @@
-import { cacheExchange, NullArray, Resolver } from "@urql/exchange-graphcache";
+import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
 import {
   dedupExchange,
   Exchange,
