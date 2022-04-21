@@ -18,7 +18,7 @@ import { useState } from "react";
 
 const Index = () => {
   const [variables, setVariables] = useState({
-    limit: 10,
+    limit: 20,
     cursor: null as null | string,
   });
   const [{ data, fetching }] = usePostsQuery({
@@ -101,7 +101,7 @@ const Index = () => {
         <div>Loading...</div>
       ) : (
         <Stack spacing="10px">
-          {data!.posts.map((post) => (
+          {data!.posts.posts.map((post) => (
             <Grid
               templateColumns="50px auto"
               cursor="pointer"
@@ -135,9 +135,9 @@ const Index = () => {
               </Grid>
               <Box bg="white">
                 <Box>
-                  <NextLink href={`./u/${post.creatorUsername}`}>
+                  <NextLink href={`./u/${post.creator.username}`}>
                     <Text color="grey" fontSize="sm" p={1}>
-                      Post by u/{post.creatorUsername}
+                      Post by u/{post.creator.username}
                       Created At:
                       {post.createdAt}
                     </Text>
@@ -158,13 +158,13 @@ const Index = () => {
           ))}
         </Stack>
       )}
-      {data ? (
+      {data && data.posts.hasMore ? (
         <Flex>
           <Button
             onClick={() => {
               setVariables({
                 limit: variables.limit,
-                cursor: data.posts[data.posts.length - 1].createdAt,
+                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
               });
             }}
             m="auto"

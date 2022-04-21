@@ -12,6 +12,7 @@ import {
   Int,
   FieldResolver,
   Root,
+  ObjectType,
 } from "type-graphql";
 import { Post } from "../entities/Post";
 import dataSource from "../index";
@@ -24,6 +25,14 @@ class PostInput {
   text: string;
 }
 
+@ObjectType()
+class PaginatedPosts {
+  @Field(() => [Post])
+  posts: Post[];
+  @Field()
+  hasMore: boolean;
+}
+
 @Resolver(Post)
 export class PostResolver {
   @FieldResolver(() => String)
@@ -31,25 +40,69 @@ export class PostResolver {
     return post.text.slice(0, 800);
   }
 
-  @Query(() => [Post])
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAUth)
+  async vote(
+    @Arg("postId", () => Int) postId: number,
+    @Arg("value", () => Int) value: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    const isUpvote = value !== -1;
+    const { userId } = req.session;
+    const Vote: number = isUpvote ? 1 : -1;
+
+    await dataSource.query(
+      `
+    START TRANSACTION;
+
+    insert into upvote ("userId", "postId", value)
+    values (${userId},${postId},${value});
+
+    update Post 
+    set points = points + ${Vote}
+    where p.id = ${postId};
+
+    COMMIT`
+    );
+
+    return true;
+  }
+
+  @Query(() => PaginatedPosts)
   async posts(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-  ): Promise<Post[]> {
+  ): Promise<PaginatedPosts> {
+    // fetch 21, but then check if 21 are there because then there are more to show
     const realLimit = Math.min(50, limit);
-    const qb = dataSource
-      .getRepository(Post)
-      .createQueryBuilder("post")
-      .orderBy('"createdAt"', "DESC")
-      .take(realLimit);
+    const realLimitPlusOne = realLimit + 1;
 
+    const replacements: any[] = [realLimitPlusOne];
     if (cursor) {
-      qb.where('"createdAt" < :cursor', {
-        cursor: new Date(parseInt(cursor)),
-      });
+      replacements.push(new Date(parseInt(cursor)));
     }
-
-    return qb.getMany();
+    const posts = await dataSource.query(
+      `
+    select p.*,
+    json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email', u.email,
+      'createdAt', u."createdAt",
+      'updatedAt', u."updatedAt"
+      ) creator
+    from post p
+    inner join public.user u on u.id = p."creatorId"
+    ${cursor ? `where p."createdAt" < $2` : ""}
+    order by p."createdAt" DESC
+    limit $1
+    `,
+      replacements
+    );
+    return {
+      posts: posts.slice(0, realLimit),
+      hasMore: posts.length === realLimitPlusOne,
+    };
   }
 
   @Query(() => Post, { nullable: true })

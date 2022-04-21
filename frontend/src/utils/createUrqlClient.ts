@@ -48,19 +48,32 @@ export const cursorPagination = (): Resolver => {
       return undefined;
     }
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const inCache = cache.resolve(entityKey, fieldKey);
+    const inCache = cache.resolve(
+      cache.resolve(entityKey, fieldKey) as string,
+      "posts"
+    );
     info.partial = !inCache;
+    let hasMore = true;
     const results: string[] = [];
     fieldInfos.forEach((fi) => {
-      const data = cache.resolve(entityKey, fi.fieldKey) as string[];
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
+      const data = cache.resolve(key, "posts") as string[];
+      const _hasMore = cache.resolve(key, "hasMore");
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
       results.push(...data);
     });
-    return results;
+    return {
+      __typename: "PaginatedPosts",
+      hasMore: hasMore,
+      posts: results,
+    };
   };
 };
 
 export const createUrqlClient = (ssrExchange: any) => ({
-  /* url: "http://localhost:4000/graphql", */
+  /* url: "http://localhost:4000/graphql",*/
   url: "https://backend.jmccarver-reddit-clone.com/graphql",
   fetchOptions: {
     credentials: "include" as const,
@@ -68,6 +81,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
   exchanges: [
     dedupExchange,
     cacheExchange({
+      keys: {
+        PaginatedPosts: () => null,
+      },
       resolvers: {
         Query: {
           posts: cursorPagination(),
@@ -75,6 +91,11 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       updates: {
         Mutation: {
+          createPost: (_result, _args, cache, _info) => {
+            cache.invalidate("Query", "posts", {
+              limit: 15,
+            });
+          },
           logout: (_result, _args, cache, _info) => {
             betterUpdateQuery<LogoutMutation, MeQuery>(
               cache,
