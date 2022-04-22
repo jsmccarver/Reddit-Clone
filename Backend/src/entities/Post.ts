@@ -1,4 +1,4 @@
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, Int } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -42,6 +42,9 @@ export class Post extends BaseEntity {
   @Field()
   @Column()
   creatorId: number;
+
+  @Field(() => Int, { nullable: true })
+  voteStatus: number | null;
 
   @Field()
   @Column()

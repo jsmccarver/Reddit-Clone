@@ -4,6 +4,7 @@ query getUserPosts($id: Float!) {
     createdAt
     updatedAt
     title
+    voteStatus
     text
     points
     creatorId

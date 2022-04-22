@@ -16,6 +16,7 @@ import {
 } from "type-graphql";
 import { Post } from "../entities/Post";
 import dataSource from "../index";
+import { Upvote } from "../entities/Upvote";
 
 @InputType()
 class PostInput {
@@ -50,20 +51,59 @@ export class PostResolver {
     const isUpvote = value !== -1;
     const { userId } = req.session;
     const Vote: number = isUpvote ? 1 : -1;
+    const upvote = await Upvote.findOne({ where: { postId, userId } });
+    if (upvote && upvote.value !== Vote) {
+      await dataSource.transaction(async (tm) => {
+        await tm.query(
+          `
+          update upvote
+          set value = $1
+          where "postId" = $2 and "userId" = $3
+        `,
+          [Vote, postId, userId]
+        );
 
-    await dataSource.query(
-      `
-    START TRANSACTION;
-
-    insert into upvote ("userId", "postId", value)
-    values (${userId},${postId},${value});
-
-    update Post 
-    set points = points + ${Vote}
-    where p.id = ${postId};
-
-    COMMIT`
-    );
+        await tm.query(
+          `
+          update post
+          set points = points + $1
+          where id = $2
+        `,
+          [2 * Vote, postId]
+        );
+      });
+    } else if (upvote && upvote.value === Vote) {
+      await dataSource.transaction(async (tm) => {
+        let Vote_Correction = isUpvote ? -1 : 1;
+        await tm.query(
+          `
+          delete from upvote
+          where "postId" = $1 and "userId" = $2
+        `,
+          [postId, userId]
+        );
+        await tm.query(
+          `
+            update post
+            set points = points + $1
+            where id = $2
+            `,
+          [Vote_Correction, postId]
+        );
+      });
+    } else if (!upvote) {
+      await dataSource.transaction(async (tm) => {
+        await tm.query(`
+          insert into upvote ("userId", "postId", value)
+          values (${userId},${postId},${value});
+        `);
+        await tm.query(`    
+          update Post 
+          set points = points + ${Vote}
+          where id = ${postId};
+        `);
+      });
+    }
 
     return true;
   }
@@ -91,6 +131,7 @@ export class PostResolver {
       'createdAt', u."createdAt",
       'updatedAt', u."updatedAt"
       ) creator
+    
     from post p
     inner join public.user u on u.id = p."creatorId"
     ${cursor ? `where p."createdAt" < $2` : ""}

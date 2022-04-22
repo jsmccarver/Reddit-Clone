@@ -1,6 +1,6 @@
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import { usePostsQuery } from "../generated/graphql";
+import { usePostsQuery, useVoteMutation } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import {
   Box,
@@ -13,10 +13,12 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Index = () => {
+  const [vote_value, vote] = useVoteMutation();
   const [variables, setVariables] = useState({
     limit: 20,
     cursor: null as null | string,
@@ -24,6 +26,7 @@ const Index = () => {
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
+  // old sort funtions
   //const [sortType, setSort] = useState("newest");
   //const [Posts, setPosts] = useState(data?.posts);
 
@@ -42,6 +45,29 @@ const Index = () => {
     }
   }, [sortType]); */
 
+  const handleScroll = () => {
+    const bottom =
+      Math.ceil(window.innerHeight + window.scrollY) >=
+      document.documentElement.scrollHeight;
+
+    if (bottom) {
+      if (data && data.posts.hasMore) {
+        setVariables({
+          limit: variables.limit,
+          cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+        });
+      }
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [data]);
   return (
     <Layout>
       <Grid
@@ -120,25 +146,44 @@ const Index = () => {
                 pt={1}
                 gap={0}
               >
-                <Box>{post.points}</Box>
-                <Box>
-                  <Text
-                    textAlign="center"
-                    color="#1A1A1B"
-                    fontSize="12px"
-                    fontWeight="700"
-                  >
-                    {post.points}
-                  </Text>
-                </Box>
-                <Box>{post.points}</Box>
+                <ChevronUpIcon
+                  onClick={async () => {
+                    console.log("start");
+                    console.log(vote_value);
+                    await vote({
+                      postId: post.id,
+                      value: 1,
+                    });
+                    console.log(vote_value);
+                    console.log("end");
+                  }}
+                  w={5}
+                  h={5}
+                />
+                <Text
+                  textAlign="center"
+                  color="#1A1A1B"
+                  fontSize="12px"
+                  fontWeight="700"
+                >
+                  {post.points}
+                </Text>
+                <ChevronDownIcon
+                  onClick={() => {
+                    vote({
+                      postId: post.id,
+                      value: -1,
+                    });
+                  }}
+                  w={5}
+                  h={5}
+                />
               </Grid>
               <Box bg="white">
                 <Box>
                   <NextLink href={`./u/${post.creator.username}`}>
                     <Text color="grey" fontSize="sm" p={1}>
-                      Post by u/{post.creator.username}
-                      Created At:
+                      Post by u/{post.creator.username}&nbsp;Created At:
                       {post.createdAt}
                     </Text>
                   </NextLink>
